@@ -46,11 +46,8 @@ func (c *Client) delete(apiName string, params map[string] string, result interf
 }
 
 func (c *Client) callApi(apiName string, method string, params map[string] string, filePath *string, auth bool, result interface{}) error {
-  if auth {
-    params["access_token"] = c.accessToken
-  }
   endPoint := fmt.Sprintf(apiUrl, c.kind, apiName)
-  var res *http.Response
+  var req *http.Request
   var err error
   if method == "GET" {
     u, err := url.Parse(endPoint)
@@ -62,31 +59,38 @@ func (c *Client) callApi(apiName string, method string, params map[string] strin
       q.Add(k, v)
     }
     u.RawQuery = q.Encode()
-    res, err = http.Get(fmt.Sprint(u))
+    req, err = http.NewRequest(method, fmt.Sprint(u), nil)
     if err != nil {
       return err
     }
   } else if method == "POST" {
     if filePath != nil {
-      res, err = upload(endPoint, params, *filePath, result)
+      req, err = createUploadReq(endPoint, params, *filePath, result)
       if err != nil {
         return err
       }
-    }
-    res, err = http.PostForm(endPoint, createValues(params))
-    if err != nil {
-      return err
+    } else {
+      req, err = http.NewRequest(method, endPoint, strings.NewReader(createValues(params).Encode()))
+      if err != nil {
+        return err
+      }
+      req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
     }
   } else if method == "PUT" || method == "DELETE" {
-    req, err := http.NewRequest(method, endPoint, strings.NewReader(createValues(params).Encode()))
+    req, err = http.NewRequest(method, endPoint, strings.NewReader(createValues(params).Encode()))
     if err != nil {
       return err
     }
     req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-    res, err = http.DefaultClient.Do(req)
-    if err != nil {
-      return err
-    }
+  } else {
+    return fmt.Errorf("Invalid http method: %s", method)
+  }
+  if auth {
+    req.Header.Set("Authorization", "Bearer " + c.accessToken)
+  }
+  res, err := http.DefaultClient.Do(req)
+  if err != nil {
+    return err
   }
   defer res.Body.Close()
 
@@ -106,7 +110,7 @@ func (c *Client) callApi(apiName string, method string, params map[string] strin
   return nil
 }
 
-func upload(endPoint string, params map[string] string, filePath string, result interface{}) (*http.Response, error) {
+func createUploadReq(endPoint string, params map[string] string, filePath string, result interface{}) (*http.Request, error) {
   file, err := os.Open(filePath)
   if err != nil {
     return nil, err
@@ -133,13 +137,8 @@ func upload(endPoint string, params map[string] string, filePath string, result 
   if err != nil {
     return nil, err
   }
-  req.Header.Add("Content-Type", writer.FormDataContentType())
-  res, err := http.DefaultClient.Do(req)
-  if err != nil {
-    return nil, err
-  }
-  defer res.Body.Close()
-  return res, nil
+  req.Header.Set("Content-Type", writer.FormDataContentType())
+  return req, nil
 }
 
 func createValues(params map[string] string) url.Values {

@@ -70,11 +70,6 @@
 
 その他、[API リファレンス](http://developers.typetalk.in/api_ja.html "Typetalk API リファレンス")を参照下さい。
 
-##Known Bug
-添付ファイルのアップロードAPI(`client.UploadAttachmentFile(<TOPIC_ID>, <FILE_NAME>)`)実行時に400 Bad Requestが発生して失敗します。  
-本APIはgoyish-typetalkでは現状未対応です。
-
 ##今後の対応
 * レスポンスに含まれる `pendings`, `talks` に対応
 * 単体テスト作成
-* 添付ファイルのアップロードAPIに対応
