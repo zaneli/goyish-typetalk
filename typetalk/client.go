@@ -91,6 +91,10 @@ func (c *Client) callApi(apiName string, method string, params map[string] strin
   defer res.Body.Close()
 
   if res.StatusCode != http.StatusOK {
+    authErrInfo := res.Header["Www-Authenticate"]
+    if len(authErrInfo) > 0 {
+      return fmt.Errorf("Invalid status: %s, Www-Authenticate: %s", res.Status, authErrInfo[0])
+    }
     return fmt.Errorf("Invalid status: %s", res.Status)
   }
   if result == nil {
