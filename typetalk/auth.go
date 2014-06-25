@@ -13,55 +13,38 @@ const (
   TopicPost Scope = "topic.post"
 )
 
-type AuthClient struct {
-  clientId string
-  clientSecret string
-  scopes []Scope
-  AccessToken string
-  RefreshToken string
-  ExpireAt time.Time
-}
-
-func NewAuthClient(clientId string, clientSecret string, scopes ...Scope) (*AuthClient) {
-  client := &AuthClient{}
-  client.clientId = clientId
-  client.clientSecret = clientSecret
-  client.scopes = scopes
-  return client
-}
-
-func (c *AuthClient) GetAccessToken() (string, error) {
+func (c *Client) GetAccessToken(clientId string, clientSecret string, scope ...Scope) (*Auth, error) {
   var scopes []string
-  scopes = make([]string, len(c.scopes))
-  for i := 0; i < len(c.scopes); i++ {
-    scopes[i] = string(c.scopes[i])
+  scopes = make([]string, len(scope))
+  for i := 0; i < len(scope); i++ {
+    scopes[i] = string(scope[i])
   }
-  if err := c.authorize(
-    "access_token",
+  auth, err := c.authorize(
     map[string] string{
-      "client_id":     c.clientId,
-      "client_secret": c.clientSecret,
+      "client_id":     clientId,
+      "client_secret": clientSecret,
       "grant_type":    "client_credentials",
-      "scope":         strings.Join(scopes, ",")}); err != nil {
-    return "", err
+      "scope":         strings.Join(scopes, ",")})
+  if err != nil {
+    return nil, err
   }
-  return c.AccessToken, nil
+  return auth, nil
 }
 
-func (c *AuthClient) UpdateToken() (string, error) {
-  if err := c.authorize(
-    "access_token",
+func (c *Client) UpdateAccessToken(clientId string, clientSecret string, refreshToken string) (*Auth, error) {
+  auth, err := c.authorize(
     map[string] string{
-      "client_id":     c.clientId,
-      "client_secret": c.clientSecret,
+      "client_id":     clientId,
+      "client_secret": clientSecret,
       "grant_type":    "refresh_token",
-      "refresh_token": c.RefreshToken}); err != nil {
-    return "", err
+      "refresh_token": refreshToken})
+  if err != nil {
+    return nil, err
   }
-  return c.AccessToken, nil
+  return auth, nil
 }
 
-func (c *AuthClient) authorize(apiName string, params map[string] string) error {
+func (c *Client) authorize(params map[string] string) (*Auth, error) {
   var result struct {
     AccessToken  string `json:"access_token"`
     TokenType    string `json:"token_type"`
@@ -69,13 +52,14 @@ func (c *AuthClient) authorize(apiName string, params map[string] string) error 
     RefreshToken string `json:"refresh_token"`
   }
 
-  client := &Client{"", "oauth2"}
-  if err := client.post(apiName, params, nil, false, &result); err != nil {
-    return err
+  if err := c.post(endPoint{apiName:"access_token", kind:"oauth2"}, params, nil, false, &result); err != nil {
+    return nil, err
   }
 
-  c.AccessToken = result.AccessToken
-  c.RefreshToken = result.RefreshToken
-  c.ExpireAt = time.Now().Add(time.Duration(result.ExpiresIn) * time.Second)
-  return nil
+  auth := &Auth{}
+  auth.AccessToken = result.AccessToken
+  auth.RefreshToken = result.RefreshToken
+  auth.ExpireAt = time.Now().Add(time.Duration(result.ExpiresIn) * time.Second)
+  c.accessToken = auth.AccessToken
+  return auth, nil
 }

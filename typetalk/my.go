@@ -9,7 +9,7 @@ func (c *Client) GetMyProfile() (*Account, error) {
   var profile struct {
     Account Account `json:"account"`
   }
-  err := c.get("profile", map[string] string {}, &profile)
+  err := c.get(endPoint{apiName:"profile"}, map[string] string {}, &profile)
   if err != nil {
     return nil, err
   }
@@ -20,7 +20,7 @@ func (c *Client) GetMyTopics() ([]TopicInfo, error) {
   var topics struct {
     TopicInfo []TopicInfo `json:"topics"`
   }
-  err := c.get("topics", map[string] string {}, &topics)
+  err := c.get(endPoint{apiName:"topics"}, map[string] string {}, &topics)
   if err != nil {
     return []TopicInfo{}, err
   }
@@ -29,7 +29,7 @@ func (c *Client) GetMyTopics() ([]TopicInfo, error) {
 
 func (c *Client) FavoriteTopic(topicId int) (*Topic, error) {
   var topic Topic
-  err := c.post(fmt.Sprintf("topics/%d/favorite", topicId), map[string] string {}, nil, true, &topic)
+  err := c.post(endPoint{apiName:fmt.Sprintf("topics/%d/favorite", topicId)}, map[string] string {}, nil, true, &topic)
   if err != nil {
     return nil, err
   }
@@ -38,7 +38,7 @@ func (c *Client) FavoriteTopic(topicId int) (*Topic, error) {
 
 func (c *Client) UnfavoriteTopic(topicId int) (*Topic, error) {
   var topic Topic
-  err := c.delete(fmt.Sprintf("topics/%d/favorite", topicId), map[string] string {}, &topic)
+  err := c.delete(endPoint{apiName:fmt.Sprintf("topics/%d/favorite", topicId)}, map[string] string {}, &topic)
   if err != nil {
     return nil, err
   }
@@ -47,7 +47,7 @@ func (c *Client) UnfavoriteTopic(topicId int) (*Topic, error) {
 
 func (c *Client) GetNotificationCount() (*Notifications, error) {
   var notifications Notifications
-  err := c.get("notifications/status", map[string] string {}, &notifications)
+  err := c.get(endPoint{apiName:"notifications/status"}, map[string] string {}, &notifications)
   if err != nil {
     return nil, err
   }
@@ -58,7 +58,7 @@ func (c *Client) ReadNotification() (*OpenStatus, error) {
   var access struct {
     Access OpenStatus `json:"access"`
   }
-  err := c.put("notifications/open", map[string] string {}, &access)
+  err := c.put(endPoint{apiName:"notifications/open"}, map[string] string {}, &access)
   if err != nil {
     return nil, err
   }
@@ -89,7 +89,7 @@ func (a *ReadMessagesInTopicApi) Call() (*Unread, error) {
   var unread struct {
     Unread Unread `json:"unread"`
   }
-  err := a.c.post("bookmark/save", params, nil, true, &unread)
+  err := a.c.post(endPoint{apiName:"bookmark/save"}, params, nil, true, &unread)
   if err != nil {
     return nil, err
   }
@@ -128,7 +128,7 @@ func (a *GetMentionListApi) Call() ([]Mention, error) {
   var mentions struct {
     Mentions []Mention `json:"mentions"`
   }
-  err := a.c.get("mentions", params, &mentions)
+  err := a.c.get(endPoint{apiName:"mentions"}, params, &mentions)
   if err != nil {
     return []Mention{}, err
   }
@@ -143,7 +143,7 @@ func (c *Client) ReadMention(mentionId int) (*Mention, error) {
   var mention struct {
     Mention Mention `json:"mention"`
   }
-  err := c.put(fmt.Sprintf("mentions/%d", mentionId), map[string] string {}, &mention)
+  err := c.put(endPoint{apiName:fmt.Sprintf("mentions/%d", mentionId)}, map[string] string {}, &mention)
   if err != nil {
     return nil, err
   }

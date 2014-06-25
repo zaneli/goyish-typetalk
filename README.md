@@ -3,34 +3,35 @@
 
 ##認証
 ###アクセストークンの取得
-    auth := typetalk.NewAuthClient(<YOUR_CLIENT_ID>, <YOUR_CLIENT_SECRET>, typetalk.My, typetalk.TopicRead, typetalk.TopicPost)
-    err := auth.GetAccessToken()
+    client := typetalk.NewClient()
+    auth, err := client.GetAccessToken(<YOUR_CLIENT_ID>, <YOUR_CLIENT_SECRET>, typetalk.My, typetalk.TopicRead, typetalk.TopicPost)
     if err != nil {
       log.Fatal(err)
     }
     fmt.Println(auth.AccessToken)
     fmt.Println(auth.RefreshToken)
-    client := typetalk.NewClient(auth)
+
     // client を使用してAPIアクセス
+    client.GetMyProfile()
 
 (スコープはtypetalk.My, typetalk.TopicRead, typetalk.TopicPostから複数指定可)
 
 ###アクセストークンの更新
-    auth := typetalk.NewAuthClient(<YOUR_CLIENT_ID>, <YOUR_CLIENT_SECRET>)
-    auth.RefreshToken = <YOUR_REFRESH_TOKEN>
-    err := auth.UpdateToken()
+    client := typetalk.NewClient()
+    auth, err := client.UpdateAccessToken(<YOUR_CLIENT_ID>, <YOUR_CLIENT_SECRET>, <RefreshToken>)
     if err != nil {
       log.Fatal(err)
     }
     fmt.Println(auth.AccessToken)
-    client := typetalk.NewClient(auth)
+
     // client を使用してAPIアクセス
+    client.GetMyProfile()
 
 ###事前に取得済みのアクセストークンを設定
-    auth := typetalk.NewAuthClient(<YOUR_CLIENT_ID>, <YOUR_CLIENT_SECRET>)
-    auth.AccessToken = <YOUR_ACCESS_TOKEN>
-    client := typetalk.NewClient(auth)
+    auth := typetalk.AuthedClient(<AccessToken>)
+
     // client を使用してAPIアクセス
+    client.GetMyProfile()
 
 ##APIの実行
 ###プロフィールの取得

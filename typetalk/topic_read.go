@@ -42,7 +42,7 @@ func (a *GetTopicMessagesApi) Call() (*Messages, error) {
     params["direction"] = "forward"
   }
   var messages Messages
-  err := a.c.get(fmt.Sprintf("topics/%d", a.topicId), params, &messages)
+  err := a.c.get(endPoint{apiName:fmt.Sprintf("topics/%d", a.topicId)}, params, &messages)
   if err != nil {
     return nil, err
   }
@@ -56,7 +56,7 @@ func (c *Client) GetMessage(topicId int, postId int) (*Post, error) {
   var post struct {
     Post Post `json:"post"`
   }
-  err := c.get(fmt.Sprintf("topics/%d/posts/%d", topicId, postId), map[string] string {}, &post)
+  err := c.get(endPoint{apiName:fmt.Sprintf("topics/%d/posts/%d", topicId, postId)}, map[string] string {}, &post)
   if err != nil {
     return nil, err
   }

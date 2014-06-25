@@ -37,7 +37,7 @@ func (a *PostMessageApi) Call() (*PostResult, error) {
     params[fmt.Sprintf("fileKeys[%d]", i)] = a.fileKeys[i]
   }
   var result PostResult
-  err := a.c.post(fmt.Sprintf("topics/%d", a.topicId), params, nil, true, &result)
+  err := a.c.post(endPoint{apiName:fmt.Sprintf("topics/%d", a.topicId)}, params, nil, true, &result)
   if err != nil {
     return nil, err
   }
@@ -49,7 +49,7 @@ func (c *Client) PostMessage(message string, topicId int) (*PostResult, error) {
 
 func (c *Client) UploadAttachmentFile(topicId int, filePath string) (*File, error) {
   var result File
-  err := c.post(fmt.Sprintf("topics/%d/attachments", topicId), map[string] string {}, &filePath, true, &result)
+  err := c.post(endPoint{apiName:fmt.Sprintf("topics/%d/attachments", topicId)}, map[string] string {}, &filePath, true, &result)
   if err != nil {
     return nil, err
   }
@@ -57,7 +57,7 @@ func (c *Client) UploadAttachmentFile(topicId int, filePath string) (*File, erro
 }
 
 func (c *Client) RemoveMessage(topicId int, postId int) (bool, error) {
-  err := c.delete(fmt.Sprintf("topics/%d/posts/%d", topicId, postId), map[string] string {}, nil)
+  err := c.delete(endPoint{apiName:fmt.Sprintf("topics/%d/posts/%d", topicId, postId)}, map[string] string {}, nil)
   if err != nil {
     return false, err
   }
@@ -68,7 +68,7 @@ func (c *Client) LikeMessage(topicId int, postId int) (*Like, error) {
   var like struct {
     Like Like `json:"like"`
   }
-  err := c.post(fmt.Sprintf("topics/%d/posts/%d/like", topicId, postId), map[string] string {}, nil, true, &like)
+  err := c.post(endPoint{apiName:fmt.Sprintf("topics/%d/posts/%d/like", topicId, postId)}, map[string] string {}, nil, true, &like)
   if err != nil {
     return nil, err
   }
@@ -79,7 +79,7 @@ func (c *Client) UnlikeMessage(topicId int, postId int) (*Like, error) {
   var like struct {
     Like Like `json:"like"`
   }
-  err := c.delete(fmt.Sprintf("topics/%d/posts/%d/like", topicId, postId), map[string] string {}, &like)
+  err := c.delete(endPoint{apiName:fmt.Sprintf("topics/%d/posts/%d/like", topicId, postId)}, map[string] string {}, &like)
   if err != nil {
     return nil, err
   }

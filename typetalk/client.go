@@ -13,40 +13,53 @@ import (
   "strings"
 )
 
-const (
-  apiUrl = "https://typetalk.in/%s/%s"
-)
-
 type Client struct {
   accessToken string
-  kind string
 }
 
-func NewClient(auth *AuthClient) (*Client) {
+type endPoint struct {
+  apiUrl string
+  kind string
+  apiName string
+}
+
+func NewClient() (*Client) {
+  return &Client{}
+}
+
+func AuthedClient(accessToken string) (*Client) {
   client := &Client{}
-  client.kind = "api/v1"
-  client.accessToken = auth.AccessToken
+  client.accessToken = accessToken
   return client
 }
 
-func (c *Client) get(apiName string, params map[string] string, result interface{}) error {
-  return c.callApi(apiName, "GET", params, nil, true, result)
+func (c *Client) get(e endPoint, params map[string] string, result interface{}) error {
+  return c.callApi(c.endPoint(e), "GET", params, nil, true, result)
 }
 
-func (c *Client) post(apiName string, params map[string] string, filePath *string, auth bool, result interface{}) error {
-  return c.callApi(apiName, "POST", params, filePath, auth, result)
+func (c *Client) post(e endPoint, params map[string] string, filePath *string, auth bool, result interface{}) error {
+  return c.callApi(c.endPoint(e), "POST", params, filePath, auth, result)
 }
 
-func (c *Client) put(apiName string, params map[string] string, result interface{}) error {
-  return c.callApi(apiName, "PUT", params, nil, true, result)
+func (c *Client) put(e endPoint, params map[string] string, result interface{}) error {
+  return c.callApi(c.endPoint(e), "PUT", params, nil, true, result)
 }
 
-func (c *Client) delete(apiName string, params map[string] string, result interface{}) error {
-  return c.callApi(apiName, "DELETE", params, nil, true, result)
+func (c *Client) delete(e endPoint, params map[string] string, result interface{}) error {
+  return c.callApi(c.endPoint(e), "DELETE", params, nil, true, result)
 }
 
-func (c *Client) callApi(apiName string, method string, params map[string] string, filePath *string, auth bool, result interface{}) error {
-  endPoint := fmt.Sprintf(apiUrl, c.kind, apiName)
+func (c *Client) endPoint(e endPoint) string {
+  if e.apiUrl == "" {
+    e.apiUrl = "https://typetalk.in/%s/%s"
+  }
+  if e.kind == "" {
+    e.kind = "api/v1"
+  }
+  return fmt.Sprintf(e.apiUrl, e.kind, e.apiName)
+}
+
+func (c *Client) callApi(endPoint string, method string, params map[string] string, filePath *string, auth bool, result interface{}) error {
   var req *http.Request
   var err error
   if method == "GET" {

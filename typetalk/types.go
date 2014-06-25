@@ -2,6 +2,13 @@ package typetalk
 
 import "time"
 
+type Auth struct {
+  AccessToken string
+  TokenType string
+  RefreshToken string
+  ExpireAt time.Time
+}
+
 type Account struct {
   Id int `json:"id"`
   Name string `json:"name"`
