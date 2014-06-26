@@ -47,20 +47,16 @@ type client struct {
 }
 
 type endPoint struct {
-	apiUrl  string
 	kind    string
 	apiName string
 }
 
 func NewClient() Client {
-	return &client{}
+	return &client{"", "https://typetalk.in/%s/%s"}
 }
 
 func AuthedClient(accessToken string) Client {
-	c := &client{}
-	c.accessToken = accessToken
-	c.apiUrl = "https://typetalk.in/%s/%s"
-	return c
+	return &client{accessToken, "https://typetalk.in/%s/%s"}
 }
 
 func (c *client) get(e endPoint, params map[string]string, result interface{}) error {

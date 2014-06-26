@@ -58,6 +58,7 @@ func (c *client) authorize(params map[string]string) (*Auth, error) {
 
 	auth := &Auth{}
 	auth.AccessToken = result.AccessToken
+	auth.TokenType = result.TokenType
 	auth.RefreshToken = result.RefreshToken
 	auth.ExpireAt = time.Now().Add(time.Duration(result.ExpiresIn) * time.Second)
 	c.accessToken = auth.AccessToken
