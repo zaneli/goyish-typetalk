@@ -5,7 +5,7 @@ import (
 	"strconv"
 )
 
-func (c *Client) GetMyProfile() (*Account, error) {
+func (c *client) GetMyProfile() (*Account, error) {
 	var profile struct {
 		Account Account `json:"account"`
 	}
@@ -16,7 +16,7 @@ func (c *Client) GetMyProfile() (*Account, error) {
 	return &profile.Account, nil
 }
 
-func (c *Client) GetMyTopics() ([]TopicInfo, error) {
+func (c *client) GetMyTopics() ([]TopicInfo, error) {
 	var topics struct {
 		TopicInfo []TopicInfo `json:"topics"`
 	}
@@ -27,7 +27,7 @@ func (c *Client) GetMyTopics() ([]TopicInfo, error) {
 	return topics.TopicInfo, nil
 }
 
-func (c *Client) FavoriteTopic(topicId int) (*Topic, error) {
+func (c *client) FavoriteTopic(topicId int) (*Topic, error) {
 	var topic Topic
 	err := c.post(endPoint{apiName: fmt.Sprintf("topics/%d/favorite", topicId)}, map[string]string{}, nil, true, &topic)
 	if err != nil {
@@ -36,7 +36,7 @@ func (c *Client) FavoriteTopic(topicId int) (*Topic, error) {
 	return &topic, nil
 }
 
-func (c *Client) UnfavoriteTopic(topicId int) (*Topic, error) {
+func (c *client) UnfavoriteTopic(topicId int) (*Topic, error) {
 	var topic Topic
 	err := c.delete(endPoint{apiName: fmt.Sprintf("topics/%d/favorite", topicId)}, map[string]string{}, &topic)
 	if err != nil {
@@ -45,7 +45,7 @@ func (c *Client) UnfavoriteTopic(topicId int) (*Topic, error) {
 	return &topic, nil
 }
 
-func (c *Client) GetNotificationCount() (*Notifications, error) {
+func (c *client) GetNotificationCount() (*Notifications, error) {
 	var notifications Notifications
 	err := c.get(endPoint{apiName: "notifications/status"}, map[string]string{}, &notifications)
 	if err != nil {
@@ -54,7 +54,7 @@ func (c *Client) GetNotificationCount() (*Notifications, error) {
 	return &notifications, nil
 }
 
-func (c *Client) ReadNotification() (*OpenStatus, error) {
+func (c *client) ReadNotification() (*OpenStatus, error) {
 	var access struct {
 		Access OpenStatus `json:"access"`
 	}
@@ -66,12 +66,12 @@ func (c *Client) ReadNotification() (*OpenStatus, error) {
 }
 
 type ReadMessagesInTopicApi struct {
-	c       *Client
+	c       *client
 	topicId int
 	postId  *int
 }
 
-func (c *Client) ReadMessagesInTopicApi(topicId int) *ReadMessagesInTopicApi {
+func (c *client) ReadMessagesInTopicApi(topicId int) *ReadMessagesInTopicApi {
 	a := &ReadMessagesInTopicApi{}
 	a.c = c
 	a.topicId = topicId
@@ -96,17 +96,17 @@ func (a *ReadMessagesInTopicApi) Call() (*Unread, error) {
 	}
 	return &unread.Unread, nil
 }
-func (c *Client) ReadMessagesInTopic(topicId int) (*Unread, error) {
+func (c *client) ReadMessagesInTopic(topicId int) (*Unread, error) {
 	return c.ReadMessagesInTopicApi(topicId).Call()
 }
 
 type GetMentionListApi struct {
-	c      *Client
+	c      *client
 	from   *int
 	unread *bool
 }
 
-func (c *Client) GetMentionListApi() *GetMentionListApi {
+func (c *client) GetMentionListApi() *GetMentionListApi {
 	a := &GetMentionListApi{}
 	a.c = c
 	return a
@@ -137,11 +137,11 @@ func (a *GetMentionListApi) Call() ([]Mention, error) {
 	return mentions.Mentions, nil
 }
 
-func (c *Client) GetMentionList() ([]Mention, error) {
+func (c *client) GetMentionList() ([]Mention, error) {
 	return c.GetMentionListApi().Call()
 }
 
-func (c *Client) ReadMention(mentionId int) (*Mention, error) {
+func (c *client) ReadMention(mentionId int) (*Mention, error) {
 	var mention struct {
 		Mention Mention `json:"mention"`
 	}

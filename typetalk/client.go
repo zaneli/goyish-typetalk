@@ -13,8 +13,37 @@ import (
 	"strings"
 )
 
-type Client struct {
+type Client interface {
+	GetAccessToken(clientId string, clientSecret string, scope ...Scope) (*Auth, error)
+	UpdateAccessToken(clientId string, clientSecret string, refreshToken string) (*Auth, error)
+
+	GetMyProfile() (*Account, error)
+	GetMyTopics() ([]TopicInfo, error)
+	FavoriteTopic(topicId int) (*Topic, error)
+	UnfavoriteTopic(topicId int) (*Topic, error)
+	GetNotificationCount() (*Notifications, error)
+	ReadNotification() (*OpenStatus, error)
+	ReadMessagesInTopicApi(topicId int) *ReadMessagesInTopicApi
+	ReadMessagesInTopic(topicId int) (*Unread, error)
+	GetMentionListApi() *GetMentionListApi
+	GetMentionList() ([]Mention, error)
+	ReadMention(mentionId int) (*Mention, error)
+
+	PostMessageApi(message string, topicId int) *PostMessageApi
+	PostMessage(message string, topicId int) (*PostResult, error)
+	UploadAttachmentFile(topicId int, filePath string) (*File, error)
+	RemoveMessage(topicId int, postId int) (bool, error)
+	LikeMessage(topicId int, postId int) (*Like, error)
+	UnlikeMessage(topicId int, postId int) (*Like, error)
+
+	GetTopicMessagesApi(topicId int) *GetTopicMessagesApi
+	GetTopicMessages(topicId int) (*Messages, error)
+	GetMessage(topicId int, postId int) (*Post, error)
+}
+
+type client struct {
 	accessToken string
+	apiUrl      string
 }
 
 type endPoint struct {
@@ -23,43 +52,41 @@ type endPoint struct {
 	apiName string
 }
 
-func NewClient() *Client {
-	return &Client{}
+func NewClient() Client {
+	return &client{}
 }
 
-func AuthedClient(accessToken string) *Client {
-	client := &Client{}
-	client.accessToken = accessToken
-	return client
+func AuthedClient(accessToken string) Client {
+	c := &client{}
+	c.accessToken = accessToken
+	c.apiUrl = "https://typetalk.in/%s/%s"
+	return c
 }
 
-func (c *Client) get(e endPoint, params map[string]string, result interface{}) error {
+func (c *client) get(e endPoint, params map[string]string, result interface{}) error {
 	return c.callApi(c.endPoint(e), "GET", params, nil, true, result)
 }
 
-func (c *Client) post(e endPoint, params map[string]string, filePath *string, auth bool, result interface{}) error {
+func (c *client) post(e endPoint, params map[string]string, filePath *string, auth bool, result interface{}) error {
 	return c.callApi(c.endPoint(e), "POST", params, filePath, auth, result)
 }
 
-func (c *Client) put(e endPoint, params map[string]string, result interface{}) error {
+func (c *client) put(e endPoint, params map[string]string, result interface{}) error {
 	return c.callApi(c.endPoint(e), "PUT", params, nil, true, result)
 }
 
-func (c *Client) delete(e endPoint, params map[string]string, result interface{}) error {
+func (c *client) delete(e endPoint, params map[string]string, result interface{}) error {
 	return c.callApi(c.endPoint(e), "DELETE", params, nil, true, result)
 }
 
-func (c *Client) endPoint(e endPoint) string {
-	if e.apiUrl == "" {
-		e.apiUrl = "https://typetalk.in/%s/%s"
-	}
+func (c *client) endPoint(e endPoint) string {
 	if e.kind == "" {
 		e.kind = "api/v1"
 	}
-	return fmt.Sprintf(e.apiUrl, e.kind, e.apiName)
+	return fmt.Sprintf(c.apiUrl, e.kind, e.apiName)
 }
 
-func (c *Client) callApi(endPoint string, method string, params map[string]string, filePath *string, auth bool, result interface{}) error {
+func (c *client) callApi(endPoint string, method string, params map[string]string, filePath *string, auth bool, result interface{}) error {
 	var req *http.Request
 	var err error
 	if method == "GET" {

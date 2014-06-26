@@ -13,7 +13,7 @@ const (
 	TopicPost Scope = "topic.post"
 )
 
-func (c *Client) GetAccessToken(clientId string, clientSecret string, scope ...Scope) (*Auth, error) {
+func (c *client) GetAccessToken(clientId string, clientSecret string, scope ...Scope) (*Auth, error) {
 	var scopes []string
 	scopes = make([]string, len(scope))
 	for i := 0; i < len(scope); i++ {
@@ -31,7 +31,7 @@ func (c *Client) GetAccessToken(clientId string, clientSecret string, scope ...S
 	return auth, nil
 }
 
-func (c *Client) UpdateAccessToken(clientId string, clientSecret string, refreshToken string) (*Auth, error) {
+func (c *client) UpdateAccessToken(clientId string, clientSecret string, refreshToken string) (*Auth, error) {
 	auth, err := c.authorize(
 		map[string]string{
 			"client_id":     clientId,
@@ -44,7 +44,7 @@ func (c *Client) UpdateAccessToken(clientId string, clientSecret string, refresh
 	return auth, nil
 }
 
-func (c *Client) authorize(params map[string]string) (*Auth, error) {
+func (c *client) authorize(params map[string]string) (*Auth, error) {
 	var result struct {
 		AccessToken  string `json:"access_token"`
 		TokenType    string `json:"token_type"`

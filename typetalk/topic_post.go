@@ -6,14 +6,14 @@ import (
 )
 
 type PostMessageApi struct {
-	c        *Client
+	c        *client
 	message  string
 	topicId  int
 	replyTo  *int
 	fileKeys []string
 }
 
-func (c *Client) PostMessageApi(message string, topicId int) *PostMessageApi {
+func (c *client) PostMessageApi(message string, topicId int) *PostMessageApi {
 	a := &PostMessageApi{}
 	a.c = c
 	a.message = message
@@ -44,11 +44,11 @@ func (a *PostMessageApi) Call() (*PostResult, error) {
 	}
 	return &result, nil
 }
-func (c *Client) PostMessage(message string, topicId int) (*PostResult, error) {
+func (c *client) PostMessage(message string, topicId int) (*PostResult, error) {
 	return c.PostMessageApi(message, topicId).Call()
 }
 
-func (c *Client) UploadAttachmentFile(topicId int, filePath string) (*File, error) {
+func (c *client) UploadAttachmentFile(topicId int, filePath string) (*File, error) {
 	var result File
 	err := c.post(endPoint{apiName: fmt.Sprintf("topics/%d/attachments", topicId)}, map[string]string{}, &filePath, true, &result)
 	if err != nil {
@@ -57,7 +57,7 @@ func (c *Client) UploadAttachmentFile(topicId int, filePath string) (*File, erro
 	return &result, nil
 }
 
-func (c *Client) RemoveMessage(topicId int, postId int) (bool, error) {
+func (c *client) RemoveMessage(topicId int, postId int) (bool, error) {
 	err := c.delete(endPoint{apiName: fmt.Sprintf("topics/%d/posts/%d", topicId, postId)}, map[string]string{}, nil)
 	if err != nil {
 		return false, err
@@ -65,7 +65,7 @@ func (c *Client) RemoveMessage(topicId int, postId int) (bool, error) {
 	return true, nil
 }
 
-func (c *Client) LikeMessage(topicId int, postId int) (*Like, error) {
+func (c *client) LikeMessage(topicId int, postId int) (*Like, error) {
 	var like struct {
 		Like Like `json:"like"`
 	}
@@ -76,7 +76,7 @@ func (c *Client) LikeMessage(topicId int, postId int) (*Like, error) {
 	return &like.Like, nil
 }
 
-func (c *Client) UnlikeMessage(topicId int, postId int) (*Like, error) {
+func (c *client) UnlikeMessage(topicId int, postId int) (*Like, error) {
 	var like struct {
 		Like Like `json:"like"`
 	}

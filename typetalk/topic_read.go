@@ -6,14 +6,14 @@ import (
 )
 
 type GetTopicMessagesApi struct {
-	c       *Client
+	c       *client
 	topicId int
 	count   *int
 	from    *int
 	forward bool
 }
 
-func (c *Client) GetTopicMessagesApi(topicId int) *GetTopicMessagesApi {
+func (c *client) GetTopicMessagesApi(topicId int) *GetTopicMessagesApi {
 	a := &GetTopicMessagesApi{}
 	a.c = c
 	a.topicId = topicId
@@ -49,11 +49,11 @@ func (a *GetTopicMessagesApi) Call() (*Messages, error) {
 	}
 	return &messages, nil
 }
-func (c *Client) GetTopicMessages(topicId int) (*Messages, error) {
+func (c *client) GetTopicMessages(topicId int) (*Messages, error) {
 	return c.GetTopicMessagesApi(topicId).Call()
 }
 
-func (c *Client) GetMessage(topicId int, postId int) (*Post, error) {
+func (c *client) GetMessage(topicId int, postId int) (*Post, error) {
 	var post struct {
 		Post Post `json:"post"`
 	}
