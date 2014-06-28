@@ -22,7 +22,7 @@ type Client interface {
 	FavoriteTopic(topicId int) (*Topic, error)
 	UnfavoriteTopic(topicId int) (*Topic, error)
 	GetNotificationCount() (*Notifications, error)
-	ReadNotification() (*OpenStatus, error)
+	ReadNotifications() (*OpenStatus, error)
 	ReadMessagesInTopicApi(topicId int) *ReadMessagesInTopicApi
 	ReadMessagesInTopic(topicId int) (*Unread, error)
 	GetMentionListApi() *GetMentionListApi

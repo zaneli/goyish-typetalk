@@ -54,11 +54,11 @@ func (c *client) GetNotificationCount() (*Notifications, error) {
 	return &notifications, nil
 }
 
-func (c *client) ReadNotification() (*OpenStatus, error) {
+func (c *client) ReadNotifications() (*OpenStatus, error) {
 	var access struct {
 		Access OpenStatus `json:"access"`
 	}
-	err := c.put(endPoint{apiName: "notifications/open"}, map[string]string{}, &access)
+	err := c.put(endPoint{apiName: "notifications"}, map[string]string{}, &access)
 	if err != nil {
 		return nil, err
 	}
@@ -90,7 +90,7 @@ func (a *ReadMessagesInTopicApi) Call() (*Unread, error) {
 	var unread struct {
 		Unread Unread `json:"unread"`
 	}
-	err := a.c.post(endPoint{apiName: "bookmark/save"}, params, nil, true, &unread)
+	err := a.c.put(endPoint{apiName: "bookmarks"}, params, &unread)
 	if err != nil {
 		return nil, err
 	}

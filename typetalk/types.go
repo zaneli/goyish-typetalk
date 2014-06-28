@@ -75,9 +75,9 @@ type Post struct {
 	Message string      `json:"message"`
 	Url     string      `json:"url"`
 	Account Account     `json:"account"`
-	TopicId int         `json:"topicId"`
+	Topic   Topic       `json:"topic"`
 	Mention IdAndReadAt `json:"mention"`
-	ReplyTo int         `json:"replyTo"`
+	ReplyTo *int        `json:"replyTo"`
 	//Talks
 	Links       []Link       `json:"links"`
 	Likes       []Like       `json:"likes"`
@@ -137,7 +137,7 @@ type Setting struct {
 }
 
 type Invite struct {
-	Term  Process `json:"term"`
+	Team  Process `json:"team"`
 	Topic Process `json:"topic"`
 }
 
