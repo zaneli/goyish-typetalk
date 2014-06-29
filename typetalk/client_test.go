@@ -138,6 +138,53 @@ func dummyResponseHandler(w http.ResponseWriter, r *http.Request) {
 		                   "createdAt":"2014-01-11T11:11:11Z",
 		                   "updatedAt":"2014-02-22T12:22:22Z"},
 		                  "attachments":[]}}}`)
+	case "/api/v1/topics/1111":
+		fmt.Fprint(w, `{"topic":
+		                 {"id":1111,
+		                  "name":"テストトピック",
+		                  "suggestion":"テストトピック",
+		                  "description":null,
+		                  "createdAt":"2014-01-02T01:23:45Z",
+		                  "updatedAt":"2014-01-12T02:34:56Z",
+		                  "lastPostedAt":"2014-01-22T02:34:56Z"},
+		                 "post":
+		                 {"id":121212,
+		                  "message":"テストメッセージ",
+		                  "replyTo":null,
+		                  "url":"https://typetalk.in/topics/1111/posts/121212",
+		                  "topicId":1111,
+		                  "likes":[],
+		                  "links":[],
+		                  "talks":[],
+		                  "mention":null,
+		                  "createdAt":"2014-06-16T16:16:16Z",
+		                  "updatedAt":"2014-06-16T16:16:16Z",
+		                  "account":
+		                  {"id":3333,
+		                   "name":"goyish",
+		                   "fullName":"goyish account",
+		                   "suggestion":"goyish",
+		                   "imageUrl":"https://typetalk.in/accounts/3333/profile_image.png?t=9999999999999",
+		                   "createdAt":"2014-01-11T11:11:11Z",
+		                   "updatedAt":"2014-02-22T12:22:22Z"},
+		                  "attachments":[]}}`)
+	case "/api/v1/topics/1111/attachments":
+		fmt.Fprint(w, `{"fileKey":"acc238a6d9317f816be327b629ebaaf41463fa0a","fileName":"goyishtypetalk876965047","fileSize":0}`)
+	case "/api/v1/topics/1111/posts/999999":
+	case "/api/v1/topics/1111/posts/121212/like":
+		fmt.Fprint(w, `{"like":
+		                {"id":66666,
+		                 "topicId":1111,
+		                 "postId":121212,
+		                 "comment":"",
+		                 "account":
+		                 {"id":3333,
+		                  "name":"goyish",
+		                  "fullName":"goyish account",
+		                  "suggestion":"goyish",
+		                  "imageUrl":"https://typetalk.in/accounts/3333/profile_image.png?t=9999999999999",
+		                  "createdAt":"2014-01-11T11:11:11Z",
+		                  "updatedAt":"2014-02-22T12:22:22Z"}}}`)
 	default:
 		panic(path)
 	}

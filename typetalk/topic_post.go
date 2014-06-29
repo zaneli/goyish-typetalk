@@ -42,6 +42,7 @@ func (a *PostMessageApi) Call() (*PostResult, error) {
 	if err != nil {
 		return nil, err
 	}
+	result.Post.Topic = result.Topic
 	return &result, nil
 }
 func (c *client) PostMessage(message string, topicId int) (*PostResult, error) {
