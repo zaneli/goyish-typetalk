@@ -47,13 +47,11 @@ type Unread struct {
 }
 
 type Messages struct {
-	Posts    []Post   `json:"posts"`
+	Posts []Post `json:"posts"`
+	// Team
 	Topic    Topic    `json:"topic"`
 	Bookmark Bookmark `json:"bookmark"`
 	HasNext  bool     `json:"hasNext"`
-	Settings Settings `json:"settings"`
-	//Pendings
-	Accounts []AccountInfo `json:"accounts"`
 }
 
 type PostResult struct {
@@ -62,22 +60,20 @@ type PostResult struct {
 }
 
 type Message struct {
-	Post     Post     `json:"post"`
-	Topic    Topic    `json:"topic"`
-	Settings Settings `json:"settings"`
-	Replies  []Post   `json:"replies"`
-	//Pendings
+	Post     Post          `json:"post"`
+	Topic    Topic         `json:"topic"`
+	Replies  []Post        `json:"replies"`
 	Accounts []AccountInfo `json:"accounts"`
 }
 
 type Post struct {
-	Id      int         `json:"id"`
-	Message string      `json:"message"`
-	Url     string      `json:"url"`
-	Account Account     `json:"account"`
-	Topic   Topic       `json:"topic"`
-	Mention IdAndReadAt `json:"mention"`
-	ReplyTo *int        `json:"replyTo"`
+	Id      int          `json:"id"`
+	Message string       `json:"message"`
+	Url     string       `json:"url"`
+	Account Account      `json:"account"`
+	Topic   Topic        `json:"topic"`
+	Mention *IdAndReadAt `json:"mention"`
+	ReplyTo *int         `json:"replyTo"`
 	//Talks
 	Links       []Link       `json:"links"`
 	Likes       []Like       `json:"likes"`
@@ -128,14 +124,6 @@ type Bookmark struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
-type Settings struct {
-	Backlog Setting `json:"backlog"`
-}
-
-type Setting struct {
-	SpaceId string `json:"spaceId"`
-}
-
 type Invite struct {
 	Team  Process `json:"team"`
 	Topic Process `json:"topic"`
@@ -154,9 +142,10 @@ type ReadStatus struct {
 }
 
 type Attachment struct {
-	FileName string `json:"fileName"`
-	WebUrl   string `json:"webUrl"`
-	ApiUrl   string `json:"apiUrl"`
+	FileName   string `json:"fileName"`
+	Attachment File   `json:"attachment"`
+	WebUrl     string `json:"webUrl"`
+	ApiUrl     string `json:"apiUrl"`
 }
 
 type IdAndReadAt struct {

@@ -56,6 +56,8 @@ func (c *client) GetTopicMessages(topicId int) (*Messages, error) {
 func (c *client) GetMessage(topicId int, postId int) (*Post, error) {
 	var post struct {
 		Post Post `json:"post"`
+		// Team
+		// Replies
 	}
 	err := c.get(endPoint{apiName: fmt.Sprintf("topics/%d/posts/%d", topicId, postId)}, map[string]string{}, &post)
 	if err != nil {
