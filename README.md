@@ -1,6 +1,8 @@
 #goyish-typetalk
 [Typetalk](https://typetalk.in/ "Typetalk") API の Go 言語ラッパーライブラリです。
 
+[![Build Status](https://api.travis-ci.org/zaneli/goyish-typetalk.png?branch=master)](https://travis-ci.org/zaneli/goyish-typetalk)
+
 ##認証
 ###アクセストークンの取得
     client := typetalk.NewClient()
