@@ -3,8 +3,17 @@
 
 [![Build Status](https://api.travis-ci.org/zaneli/goyish-typetalk.png?branch=master)](https://travis-ci.org/zaneli/goyish-typetalk)
 
+##インストール
+    go get github.com/zaneli/goyish-typetalk/typetalk
+
 ##認証
 ###アクセストークンの取得
+    import (
+        "fmt"
+        "github.com/zaneli/goyish-typetalk/typetalk"
+        "log"
+    )
+
     client := typetalk.NewClient()
     auth, err := client.GetAccessToken(<YOUR_CLIENT_ID>, <YOUR_CLIENT_SECRET>, typetalk.My, typetalk.TopicRead, typetalk.TopicPost)
     if err != nil {
