@@ -146,6 +146,10 @@ func (c *client) callApi(endPoint string, method string, params map[string]strin
 	return nil
 }
 
+func (c *client) String() string {
+	return "typetalk.Client"
+}
+
 func createUploadReq(endPoint string, params map[string]string, filePath string, result interface{}) (*http.Request, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
