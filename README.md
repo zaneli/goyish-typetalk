@@ -80,5 +80,5 @@
     }
     fmt.Println(res)
 
-その他、[API リファレンス](http://developers.typetalk.in/api_ja.html "Typetalk API リファレンス")を参照下さい。
+その他、[API リファレンス](https://developer.nulab-inc.com/ja/docs/typetalk/ "Typetalk API リファレンス")を参照下さい。
 
